@@ -13,7 +13,7 @@ class PostController extends Controller
     public function index()
     {
         // $posts=Post::all();
-        $posts=Post::Paginate(10);
+        $posts=Post::orderBy('created_at', 'desc')->Paginate(10);
         return view('post.index', compact('posts'));
     }
 
@@ -32,10 +32,10 @@ class PostController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|max:20',
-            'body' => 'requird|max:400',
+            'body' => 'required|max:400',
         ]);
 
-        $validated['user_id'] = auth()->id;
+        $validated['user_id'] = auth()->id();
 
         $post = Post::create($validated);
 

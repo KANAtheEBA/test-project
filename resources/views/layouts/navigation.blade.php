@@ -15,12 +15,12 @@
                     <!-- <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link> -->
-                    <div class="mt-5">
+                    <div class="mt-6">
                         <x-nav-link :href="route('post.index')" :active="request()->routeIs('post.index')">
                             投稿一覧
                         </x-nav-link>
                     </div>
-                    <div class="mt-5">
+                    <div class="mt-6">
                         <x-nav-link :href="route('post.create')" :active="request()->routeIs('post.create')">
                             新規作成
                         </x-nav-link>
@@ -33,7 +33,28 @@
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                            <div>{{ Auth::user()->name }}</div>
+                        <div>
+                            <?php
+                            session_start();
+                            if(!isset($_SESSION['visited'])) {
+                                if (isset($_COOKIE['visit_count'])) {
+                                    $n = $_COOKIE['visit_count'] + 1;
+                                } else {
+                                    $n = 1;
+                                }
+                                setcookie('visit_count', $n, time() + 3600 * 24); // 1日の有効期限
+                                $_SESSION['visited'] = true; // 訪問フラグを立てる
+                            } else {
+                                $n = $_COOKIE['visit_count'] ?? 1;
+                            }
+                            print $n.'回目の訪問です。';
+                            ?>
+                            @if($_SESSION['count'] >= 2)
+                            <div class="text-red-600 font-bold">
+                                {{ Auth::user()->name }}さん、おかえりなさい！
+                            </div>
+                            @endif    
+                        </div>
 
                             <div class="ms-1">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">

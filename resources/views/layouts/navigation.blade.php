@@ -33,30 +33,44 @@
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                        <div>
+                            <div>
                             <?php
                             session_start();
-                            if(!isset($_SESSION['visited'])) {
-                                if (isset($_COOKIE['visit_count'])) {
-                                    $n = $_COOKIE['visit_count'] + 1;
-                                } else {
-                                    $n = 1;
-                                }
-                                setcookie('visit_count', $n, time() + 3600 * 24); // 1日の有効期限
-                                $_SESSION['visited'] = true; // 訪問フラグを立てる
-                            } else {
-                                $n = $_COOKIE['visit_count'] ?? 1;
+                            $visitCount = 1;
+                            $now = time();
+                            $twentyfourHour = 24*60*60;
+
+                            setcookie('visit_count', '', time() - 3600);
+                            setcookie('last_visit', '', time() - 3600);
+
+                            if(isset($_COOKIE['visit_count']) && isset($_COOKIE['last_visit'])) {
+                                //  既存訪問者の場合
+                                $lastVisit = $_COOKIE['last_visit']; 
+                                if($now - $lastVisit >= $twentyfourHour) {
+                                    //  前回訪問から24h以上経過していたらカウント追加
+                                    $visitCount = $_COOKIE['visit_count'] + 1;
+                                    //  　最新のカウントをcookieにセット、約一か月間保持
+                                    setcookie('visit_count', $visitCount, $now + $twentyfourHour*30);
+                                    } else {
+                                        $visitCount = $_COOKIE['visit_count'];
+                                    }
                             }
-                            print $n.'回目の訪問です。';
+                            //  初回訪問者なら現訪問日時をcookieにセット、約一か月間保持
+                            setcookie('last_visit', $now, $now + $twentyfourHour*30);
+                            print $visitCount. '回目の訪問です';
                             ?>
-                            @if($_SESSION['count'] >= 2)
+                            <br/>
+                            @if($visitCount >= 2)
                             <div class="text-red-600 font-bold">
                                 {{ Auth::user()->name }}さん、おかえりなさい！
+                            </div> 
+                            @else
+                            <div class="text-red-600 font-bold">
+                                {{ Auth::user()->name }}さん、ようこそ！
+                            </div> 
+                            @endif                            
                             </div>
-                            @endif    
-                        </div>
-
-                            <div class="ms-1">
+                            <div class="ms-1 inline-flex">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
                                 </svg>

@@ -26,6 +26,17 @@ services:
             - mailpit
             - selenium
             - pgsql
+    pgadmin4:
+        image: dpage/pgadmin4
+        ports:
+            - 8888:80
+        volumes:
+            - pgadmin4_data:/var/lib/pgadmin
+        environment:
+            PGADMIN_DEFAULT_EMAIL: '${PGADMIN_EMAIL}'
+            PGADMIN_DEFAULT_PASSWORD: '${PGADMIN_PASSWORD}'
+        networks:
+           - sail
     meilisearch:
         image: 'getmeili/meilisearch:latest'
         ports:
@@ -92,4 +103,6 @@ volumes:
     sail-meilisearch:
         driver: local
     sail-pgsql:
+        driver: local
+    pgadmin4_data:
         driver: local

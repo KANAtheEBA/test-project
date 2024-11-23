@@ -36,12 +36,10 @@
                             <div>
                             <?php
                             session_start();
+                            session_regenerate_id(true);
                             $visitCount = 1;
                             $now = time();
                             $twentyfourHour = 24*60*60;
-
-                            setcookie('visit_count', '', time() - 3600);
-                            setcookie('last_visit', '', time() - 3600);
 
                             if(isset($_COOKIE['visit_count']) && isset($_COOKIE['last_visit'])) {
                                 //  既存訪問者の場合
@@ -54,6 +52,9 @@
                                     } else {
                                         $visitCount = $_COOKIE['visit_count'];
                                     }
+                            } else {
+                                //初回訪問の場合の処理
+                                setcookie('visit_count', $visitCount, $now + $twentyfourHour * 30);
                             }
                             //  初回訪問者なら現訪問日時をcookieにセット、約一か月間保持
                             setcookie('last_visit', $now, $now + $twentyfourHour*30);

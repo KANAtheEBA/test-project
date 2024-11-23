@@ -23,7 +23,7 @@
             </h1>
             <hr class="w-full">
             <p class="mt-4 p-4">
-                {{$post->body}}
+                {!!$post->body!!}
             </p>
             <div class="p-4 text-sm font-semibold">
                 <p>
@@ -33,7 +33,7 @@
         </div>
         @endforeach
         <div class="mb-4">
-            {{ $posts->links() }}
+            {{$posts->links()}}
         </div>
     </div>
 </x-app-layout>

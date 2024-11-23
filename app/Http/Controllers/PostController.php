@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use Illuminate\Http\Request;
+use HTMLPurifier;
+use HTMLPurifier_Config;
 
 class PostController extends Controller
 {
@@ -12,8 +14,18 @@ class PostController extends Controller
      */
     public function index()
     {
-        // $posts=Post::all();
-        $posts=Post::orderBy('created_at', 'desc')->Paginate(10);
+        $config = HTMLPurifier_Config::createDefault();
+        $purifier = new HTMLPurifier($config);
+        
+        // ペジネーション対応で投稿を取得
+        $posts = Post::orderBy('created_at', 'desc')->Paginate(10);
+
+        // 各投稿のHTMLをクリーンアップ
+        $posts->getCollection()->transform(function ($post) use ($purifier) {
+            $post->body = $purifier->purify($post->body);
+            return $post;
+        });
+        
         return view('post.index', compact('posts'));
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+header_remove('X-Powered-By'); // ヘッダーからX-Powered-Byを削除
+
 use Illuminate\Http\Request;
 
 define('LARAVEL_START', microtime(true));
